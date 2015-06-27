@@ -1,0 +1,18 @@
+Username: CMD
+Password: i1ev2mtpfw
+
+Main server is running at
+host: peblnjdirmap01 
+port:  17429
+
+
+
+UI links
+Link to watch game: 
+web: nylxdev2.dev.bloomberg.com:8080/
+
+OR 
+
+update settings.cfg with the following lines
+biuiport 17488
+java -jar BaseInvaders.jar ux
