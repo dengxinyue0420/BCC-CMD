@@ -11,7 +11,7 @@ def login(host, port, username, password):
         sock.sendall(username+" "+password+"\n")
         return sock
     except socket.error as msg:
-        print "Could not create socket: "+str(msg)
+        print "Could not create socket: " + str(msg)
 
 def run(sock, command):
 # print command

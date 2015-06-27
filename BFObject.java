@@ -1,4 +1,4 @@
-package battlefield;
+
 
 public class BFObject {
 	long id;

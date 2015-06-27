@@ -5,8 +5,6 @@ import java.net.Socket;
 
 import javax.swing.JApplet;
 
-import battlefield.BattleField;
-
 public class MyJApplet extends JApplet {
 	private static String username = "a";// "CMD";
 	private static String password = "a";// "i1ev2mtpfw";

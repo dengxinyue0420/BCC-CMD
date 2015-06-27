@@ -11,8 +11,6 @@ import java.net.Socket;
 
 import javax.swing.JPanel;
 
-import battlefield.BattleField;
-
 public class UI extends JPanel {
 
 	private CanvasPanel canvas;
@@ -20,13 +18,13 @@ public class UI extends JPanel {
 	PrintWriter out;
 	BufferedReader in;
 
-	private static int FPS = 30;
+	private static int FPS = 20;
 	private static long lastRefresh = System.currentTimeMillis();
 	
 	public static String username;
 	
-	double targetX;
-	double targetY;
+	public static double targetX;
+	public static double targetY;
 
 	public UI(BattleField bf, PrintWriter out, BufferedReader in, String username) {
 		this.bf = bf;
@@ -102,9 +100,9 @@ public class UI extends JPanel {
 						bf.updateStatus(scan, x, y);
 					}
 				} else if (3 == btn) {
-					targetX = x;
-					targetY = y;
-					//out.println("BOMB " + x + " " + y);
+					bf.playSound();
+					out.println("BOMB " + x + " " + y);
+
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
