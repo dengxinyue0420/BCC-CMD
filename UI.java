@@ -5,9 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 import javax.swing.JPanel;
 
@@ -18,15 +16,15 @@ public class UI extends JPanel {
 	PrintWriter out;
 	BufferedReader in;
 
-	private static int FPS = 20;
+	private static int FPS = 30;
 	private static long lastRefresh = System.currentTimeMillis();
-	
+
 	public static String username;
-	
+
 	public static double targetX;
 	public static double targetY;
 
-	public UI(BattleField bf, PrintWriter out, BufferedReader in, String username) {
+	public UI(final BattleField bf, final PrintWriter out, final BufferedReader in, String username) {
 		this.bf = bf;
 		this.out = out;
 		this.in = in;
@@ -53,7 +51,7 @@ public class UI extends JPanel {
 
 						out.println("STATUS");
 						String status = in.readLine();
-						//System.out.println(status);
+						// System.out.println(status);
 						bf.updateStatus(status, -1, -1);
 
 						canvas.repaint();

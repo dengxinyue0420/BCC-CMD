@@ -1,10 +1,4 @@
-
-
 import java.awt.Color;
-import java.io.*;
-
-import javax.sound.sampled.*;
-
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,15 +11,21 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 public class BattleField {
 	Ship ourShip = new Ship(0, 0, 0, 0, 40);
 	Set<Ship> ships;
 	Map<String, Mine> mines = new HashMap<String, Mine>();
-	Map<String, Bomb> bombs = new HashMap<String, Bomb>(); 
-	Map<String, Bomb> newBombs = new HashMap<String, Bomb>(); 
+	Map<String, Bomb> bombs = new HashMap<String, Bomb>();
+	Map<String, Bomb> newBombs = new HashMap<String, Bomb>();
 	static long[][] fog = null;
-	
+
 	public static String username;
 
 	public static double mapWidth;
@@ -48,69 +48,66 @@ public class BattleField {
 	public static final String CONFIGURATIONS_OUT = "CONFIGURATIONS_OUT";
 	public static final String STATUS = "STATUS";
 	public static final String STATUS_OUT = "STATUS_OUT";
-	
+
 	public static BufferedImage scv_blue1 = null;
 	public static BufferedImage scv_blue2 = null;
 	public static BufferedImage scv_pink1 = null;
-	public static BufferedImage scv_pink2= null;
+	public static BufferedImage scv_pink2 = null;
 
 	public static BufferedImage mine_blue = null;
-	public static BufferedImage mine_pink= null;
-	public static BufferedImage mine_green= null;
+	public static BufferedImage mine_pink = null;
+	public static BufferedImage mine_green = null;
 
-	public static BufferedImage bomb= null;
-	public static BufferedImage bomb_explosion= null;
+	public static BufferedImage bomb = null;
+	public static BufferedImage bomb_explosion = null;
 
 	private final int BUFFER_SIZE = 128000;
 	private File soundFile;
-    private AudioInputStream audioStream;
-    private AudioFormat audioFormat;
-    private SourceDataLine sourceLine;
+	private AudioInputStream audioStream;
+	private AudioFormat audioFormat;
+	private SourceDataLine sourceLine;
 
 	Random rand = new Random();
-		String[] soundFiles = new String[] {
-				"res/TCvYes00.wav",
-				"res/TCvYes01.wav",
-				"res/TCvYes02.wav",
-				"res/TCvYes03.wav",
-				"res/TCvYes04.wav"
-		};
+	String[] soundFiles = new String[] { "res/TCvYes00.wav", "res/TCvYes01.wav", "res/TCvYes02.wav",
+			"res/TCvYes03.wav", "res/TCvYes04.wav" };
 
 	public BattleField(String username) {
 		this.username = username;
+		ourShip.self = true;
 		ships = Collections.newSetFromMap(new ConcurrentHashMap<Ship, Boolean>());
-		
+
 		loadImages();
-		
+
 	}
-	
+
 	private void loadImages() {
 		try {
-		    scv_blue1 = ImageIO.read(new File("scv_blue1.png"));
-		    scv_blue2 = ImageIO.read(new File("scv_blue2.png"));
-		    scv_pink1= ImageIO.read(new File("scv_pink1.png"));
-		    scv_pink2= ImageIO.read(new File("scv_pink2.png"));
+			scv_blue1 = ImageIO.read(new File("scv_blue1.png"));
+			scv_blue2 = ImageIO.read(new File("scv_blue2.png"));
+			scv_pink1 = ImageIO.read(new File("scv_pink1.png"));
+			scv_pink2 = ImageIO.read(new File("scv_pink2.png"));
 
-		    mine_blue= ImageIO.read(new File("mine_blue.png"));
-		    mine_pink= ImageIO.read(new File("mine_pink.png"));
-		    mine_green = ImageIO.read(new File("mine_green.png"));
+			mine_blue = ImageIO.read(new File("mine_blue.png"));
+			mine_pink = ImageIO.read(new File("mine_pink.png"));
+			mine_green = ImageIO.read(new File("mine_green.png"));
 
-		    bomb= ImageIO.read(new File("bomb.png"));
-		    bomb_explosion= ImageIO.read(new File("bomb_explosion.png"));
+			bomb = ImageIO.read(new File("bomb.png"));
+			bomb_explosion = ImageIO.read(new File("bomb_explosion.png"));
 
 			rand.setSeed(System.currentTimeMillis());
 		} catch (IOException e) {
 
 		}
-		
-	}
-	
-    /**
-     * @param filename the name of the file that is going to be played
-     */
-    public void playSound(){
 
-    	Thread t = new Thread(new Runnable() {
+	}
+
+	/**
+	 * @param filename
+	 *            the name of the file that is going to be played
+	 */
+	public void playSound() {
+
+		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -133,8 +130,7 @@ public class BattleField {
 
 				audioFormat = audioStream.getFormat();
 
-				DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-						audioFormat);
+				DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 				try {
 					sourceLine = (SourceDataLine) AudioSystem.getLine(info);
 					sourceLine.open(audioFormat);
@@ -158,18 +154,16 @@ public class BattleField {
 					}
 					if (nBytesRead >= 0) {
 						@SuppressWarnings("unused")
-						int nBytesWritten = sourceLine.write(abData, 0,
-								nBytesRead);
+						int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
 					}
 				}
 
 				sourceLine.drain();
 				sourceLine.close();
 			}
-    	}) ;
-    	t.start();
-    }
-	
+		});
+		t.start();
+	}
 
 	public static void setConfigurations(String config) {
 		if (null == config)
@@ -178,8 +172,7 @@ public class BattleField {
 		String[] strs = config.split(" ");
 
 		if (null == strs[0] || !strs[0].equals(CONFIGURATIONS_OUT)) {
-			System.out.println("ERROR, " + CONFIGURATIONS_OUT + " != "
-					+ strs[0]);
+			System.out.println("ERROR, " + CONFIGURATIONS_OUT + " != " + strs[0]);
 			return;
 		}
 		for (int i = 1; i < strs.length; i++) {
@@ -263,7 +256,7 @@ public class BattleField {
 			double radius = visionRadius;
 			if (strs[0].equals("SCAN_OUT")) {
 				scan = true;
-				radius =scanRadius;
+				radius = scanRadius;
 			}
 
 			int count;
@@ -273,16 +266,16 @@ public class BattleField {
 			long curTime = System.currentTimeMillis();
 			for (int i = 0; i < strs.length; i++) {
 				switch (strs[i]) {
-				
+
 				case "STATUS_OUT":
 					// x y dx dy
 					ourShip.x = Double.parseDouble(strs[++i]);
 					ourShip.y = Double.parseDouble(strs[++i]);
 					ourShip.dx = Double.parseDouble(strs[++i]);
 					ourShip.dy = Double.parseDouble(strs[++i]);
-					
-					//System.out.println("direction = " + ourShip.getDirectionImageIndex());
-					
+
+					// System.out.println("direction = " + ourShip.getDirectionImageIndex());
+
 					updateX = ourShip.x;
 					updateY = ourShip.y;
 
@@ -290,8 +283,7 @@ public class BattleField {
 					// update fog
 					for (int y = (int) (-radius); y < radius; y++) {
 						for (int x = (int) (-radius); x < radius; x++) {
-							double dist2 = Math.abs(y) * Math.abs(y)
-									+ Math.abs(x) * Math.abs(x);
+							double dist2 = Math.abs(y) * Math.abs(y) + Math.abs(x) * Math.abs(x);
 							if (dist2 > radius * radius)
 								continue;
 							fog[(int) transY(updateY + y)][(int) transX(updateX + x)] = curTime;
@@ -300,22 +292,20 @@ public class BattleField {
 
 					// update ship)
 					for (Ship ship : ships) {
-						if (withIn(ship.x, ship.y, updateX, updateY,
-								radius) || (0 == getFade(ship.time))) {
+						if (withIn(ship.x, ship.y, updateX, updateY, radius) || (0 == getFade(ship.time))) {
 							ships.remove(ship);
 						}
 					}
-					
+
 					// update bomb
 					for (Bomb bomb : bombs.values()) {
 						if (withIn(bomb.x, bomb.y, ourShip.x, ourShip.y, radius)) {
 							bombs.remove(bomb);
 						}
 					}
-					
-					
+
 					// move to targetX, targetY
-					//ourShip.getRadians(UI.targetX - ourShip.x, UI.targetY - ourShip.y);
+					// ourShip.getRadians(UI.targetX - ourShip.x, UI.targetY - ourShip.y);
 					break;
 
 				case "MINES":
@@ -358,14 +348,14 @@ public class BattleField {
 						double x = Double.parseDouble(strs[++i]);
 						double y = Double.parseDouble(strs[++i]);
 						String id = Mine.constructId(x, y);
-						Bomb b= new Bomb(x,y, bombEffectRadius*2);
+						Bomb b = new Bomb(x, y, bombEffectRadius * 2);
 						newBombs.put(id, b);
 					}
 
 					for (Bomb b : bombs.values()) {
 						if (b.explosion > 0) {
 
-							if (b.explosion > 3) {
+							if (b.explosion > 4) {
 								bombs.remove(b.id);
 								continue;
 							} else {
@@ -373,13 +363,13 @@ public class BattleField {
 							}
 						}
 
-						if (!withIn(b.x,b.y, ourShip.x, ourShip.y, visionRadius)) {
+						if (!withIn(b.x, b.y, ourShip.x, ourShip.y, visionRadius)) {
 							bombs.remove(b.id);
-						} else if (!newBombs.keySet().contains(b.id))  {
+						} else if (!newBombs.keySet().contains(b.id)) {
 							b.setExplosion();
 						}
 					}
-					
+
 					bombs.putAll(newBombs);
 					break;
 
@@ -399,11 +389,10 @@ public class BattleField {
 		for (int y = 0; y < mapHeight; y++) {
 			for (int x = 0; x < mapWidth; x++) {
 				int b = (int) ((155) * getFade(fog[y][x]));
-				g.setColor(new Color(48+b, 64+b, 47+b));
+				g.setColor(new Color(48 + b, 64 + b, 47 + b));
 				g.fillRect(x, y, 1, 1);
 			}
 		}
-
 
 		ourShip.draw(g);
 		for (Ship ship : ships) {
@@ -435,8 +424,7 @@ public class BattleField {
 		return y;
 	}
 
-	public static boolean withIn(double x1, double y1, double x2, double y2,
-			double dist) {
+	public static boolean withIn(double x1, double y1, double x2, double y2, double dist) {
 		return dist * dist > (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 	}
 

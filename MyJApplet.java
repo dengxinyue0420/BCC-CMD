@@ -15,6 +15,9 @@ public class MyJApplet extends JApplet {
 	public void init() {
 
 		try {
+			Bot b1 = new Bot("b", "b", server, port);
+			b1.start();
+
 			// connect to server
 			PrintWriter out = null;
 			BufferedReader in = null;
@@ -29,15 +32,11 @@ public class MyJApplet extends JApplet {
 			bf = new BattleField(username);
 			bf.setConfigurations(config);
 
-			out.println("ACCELERATE 0 1");
-			in.readLine();
-
-			setSize((int)bf.mapWidth, (int)bf.mapHeight);
+			setSize((int) bf.mapWidth, (int) bf.mapHeight);
 
 			UI wholePanel = new UI(bf, out, in, username);
 			getContentPane().add(wholePanel);
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
