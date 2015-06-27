@@ -45,7 +45,7 @@ public class UI extends JPanel {
 					in = new BufferedReader(new InputStreamReader(
 							s.getInputStream()));
 
-					out.write(username + " " + password + "\n");
+					out.println(username + " " + password);
 
 					while (true) {
 						long curTime = System.currentTimeMillis();
@@ -54,7 +54,7 @@ public class UI extends JPanel {
 						}
 
 						// TODO make query
-						out.write("STATUS" + "\n");
+						out.println("STATUS");
 						String response = in.readLine();
 						System.out.println(response);
 
