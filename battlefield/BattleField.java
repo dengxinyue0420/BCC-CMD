@@ -8,6 +8,47 @@ public class BattleField {
 	Map<Long, Ship> ships = new HashMap<Long, Ship>();
 	Map<Long, Mine> mines = new HashMap<Long, Mine>();
 	Map<Long, Bomb> bombs = new HashMap<Long, Bomb>();
+	
+	public static double mapWidth;
+	public static double mapHeight;
+	public static double captureRadius;
+	public static double visionRadius;
+	public static double friction;
+	public static double brakeFriction;
+	public static double bombPlaceRadius;
+	public static double bombEffectRadius;
+	public static double bombDelay;
+	public static double bombPower;
+	public static double scanRadius;
+	public static double scanDelay;
+	
+	public static final String CONFIGURATIONS = "CONFIGURATIONS";
+	public static final String CONFIGURATIONS_OUT = "CONFIGURATIONS_OUT";
+
+
+	// CONFIGURATIONS_OUT MAPWIDTH 500 MAPHEIGHT 500 CAPTURERADIUS 5.0
+	// VISIONRADIUS 150.0 FRICTION 0.99 BRAKEFRICTION 0.987 BOMBPLACERADIUS 50.0
+	// BOMBEFFECTRADIUS 15.0 BOMBDELAY 100 BOMBPOWER 15.0 SCANRADIUS 50.0
+	// SCANDELAY 200
+	public static void setConfigurations(String config) {
+		if (null == config)
+			return;
+		
+		String[] strs = config.split(" ");
+		
+		if (null == strs[0] || !strs[0].equals(CONFIGURATIONS_OUT)) {
+			System.out.println("ERROR, need " + CONFIGURATIONS_OUT);
+			return;
+		}
+		for (int i = 0; i < strs.length; i++) {
+			switch (strs[i])
+			
+		}
+		
+			
+		
+		
+	}
 
 	// STATUS_OUT 250.0 250.0 0.0 0.0 MINES 9 -- 237.69780038539236
 	// 358.98849031851864 -- 345.98200138424863 214.6881476133634 --
@@ -20,6 +61,14 @@ public class BattleField {
 	// 250.0 250.0 0.0 0.0 250.0 250.0 0.0 0.0 250.0 250.0 0.0 0.0 250.0 250.0
 	// 0.0 0.0 BOMBS 0
 	public void updateStatus(String status) {
-
+		if (null == status)
+			return;
+		
+		try {
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
