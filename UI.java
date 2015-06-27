@@ -11,20 +11,29 @@ import java.net.Socket;
 
 import javax.swing.JPanel;
 
+import battlefield.BattleField;
+
 public class UI extends JPanel {
-	private static final long serialVersionUID = 6509217204123368745L;
-	private static final int UPDATE_THREAD_INTERVAL = 20;
-	private static int FPS = 10;
-	private static long lastRefresh = System.currentTimeMillis();
+
 	private CanvasPanel canvas;
+	private BattleField bf;
+	PrintWriter out;
+	BufferedReader in;
 
-	private static String username = "a";//"CMD";
-	private static String password = "a";//"i1ev2mtpfw";
-	private static String server = "127.0.0.1";
-	private static int port = 17429;
+	private static int FPS = 30;
+	private static long lastRefresh = System.currentTimeMillis();
+	
+	public static String username;
+	
+	double targetX;
+	double targetY;
 
+	public UI(BattleField bf, PrintWriter out, BufferedReader in, String username) {
+		this.bf = bf;
+		this.out = out;
+		this.in = in;
+		this.username = username;
 
-	public UI() {
 		canvas = new CanvasPanel();
 		PointListener listener = new PointListener();
 		canvas.addMouseMotionListener(listener);
@@ -37,15 +46,6 @@ public class UI extends JPanel {
 			@Override
 			public void run() {
 				try {
-					// connect to server
-					PrintWriter out = null;
-					BufferedReader in = null;
-					Socket s = new Socket(server, port);
-					out = new PrintWriter(s.getOutputStream(), true);
-					in = new BufferedReader(new InputStreamReader(
-							s.getInputStream()));
-
-					out.println(username + " " + password);
 
 					while (true) {
 						long curTime = System.currentTimeMillis();
@@ -53,17 +53,13 @@ public class UI extends JPanel {
 							Thread.sleep(1000 / FPS - (curTime - lastRefresh));
 						}
 
-						// TODO make query
 						out.println("STATUS");
-						String response = in.readLine();
-						System.out.println(response);
-
-						// TODO update battle field
+						String status = in.readLine();
+						//System.out.println(status);
+						bf.updateStatus(status, -1, -1);
 
 						canvas.repaint();
-
-						// TODO send commands
-
+						lastRefresh = System.currentTimeMillis();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -82,6 +78,7 @@ public class UI extends JPanel {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			setBackground(Color.WHITE);
+			bf.draw(g);
 		}
 	} // end of CanvasPanel class
 
@@ -90,9 +87,28 @@ public class UI extends JPanel {
 		// in case that a user presses using a mouse,
 		// record the point where it was pressed.
 		public void mousePressed(MouseEvent event) {
-			int x = event.getX();
-			int y = event.getY();
-			System.out.println("Mouse pressed at " + x + ", " + y);
+			try {
+				int x = event.getX();
+				int y = event.getY();
+				int btn = event.getButton();
+				System.out.println("Mouse " + btn + " pressed at " + x + ", " + y);
+				if (1 == btn) {
+					out.println("SCAN " + x + " " + y);
+					System.out.println("SCAN " + x + " " + y);
+					String scan = in.readLine();
+					System.out.println("SCAN:" + scan);
+					if (!scan.contains("ERROR")) {
+						System.out.println("has ERROR");
+						bf.updateStatus(scan, x, y);
+					}
+				} else if (3 == btn) {
+					targetX = x;
+					targetY = y;
+					//out.println("BOMB " + x + " " + y);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			canvas.repaint();
 		}
 
